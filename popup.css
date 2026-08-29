@@ -282,20 +282,20 @@ body {
 }
 
 .empty-state-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--ghost);
+  background: transparent;
   margin-bottom: 8px;
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .empty-state-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
 }
 
 /* ── Save Row ─────────────────────────────────── */

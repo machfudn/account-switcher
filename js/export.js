@@ -81,6 +81,6 @@ async function importSessions(file) {
   const { accounts } = await getAccounts();
   Object.assign(accounts, incoming);
   await saveAccounts(accounts);
-  renderAccounts();
+  await renderAccounts();
   await openModal({ title: 'Done', message: `${count} account(s) imported.` });
 }

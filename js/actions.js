@@ -19,6 +19,7 @@ function goHome() {
 
 async function saveCurrentSession() {
   const name = document.getElementById('account-name').value.trim();
+  const appName = APPS[currentApp] ? APPS[currentApp].name : 'this app';
   if (!name) {
     await openModal({ title: 'Name Required', message: 'Enter an account name.' });
     return;
@@ -26,7 +27,7 @@ async function saveCurrentSession() {
 
   const cookies = await getSessionCookies();
   if (cookies.length === 0) {
-    await openModal({ title: 'No Session Found', message: `No cookies found. Please login to ${APPS[currentApp].name} first.` });
+    await openModal({ title: 'No Session Found', message: `No cookies found. Please login to ${appName} first.` });
     return;
   }
 
@@ -141,9 +142,10 @@ async function deleteAccount(name) {
 }
 
 async function clearAllSessions() {
+  const appName = APPS[currentApp] ? APPS[currentApp].name : 'this app';
   const confirmed = await openModal({
     title: 'Clear All',
-    message: `Delete all ${APPS[currentApp].name} sessions? This cannot be undone.`,
+    message: `Delete all ${appName} sessions? This cannot be undone.`,
     confirmText: 'Clear All',
     danger: true
   });

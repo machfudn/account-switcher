@@ -1,3 +1,11 @@
+function getAppIcon(app, prefix) {
+  if (!app || !app.icon) return '';
+  const p = prefix || 'icon_' + Math.random().toString(36).substring(2, 7);
+  return app.icon
+    .replace(/id="([^"]+)"/g, `id="${p}_$1"`)
+    .replace(/url\(#([^)]+)\)/g, `url(#${p}_$1)`);
+}
+
 function applyTheme() {
   const app = APPS[currentApp];
   const root = document.documentElement;
@@ -5,6 +13,8 @@ function applyTheme() {
   root.style.setProperty('--primary-hover', app.colorHover);
   root.style.setProperty('--primary-light', app.colorLight);
   root.style.setProperty('--primary-ring', app.color);
+  // card icon uses brand iconBg (separate from --primary so banner/Save stay green)
+  root.style.setProperty('--card-icon-bg', (app.iconBg) || 'var(--ghost)');
 }
 
 function updateExportBar() {
@@ -34,7 +44,7 @@ async function renderCards() {
     const card = document.createElement('div');
     card.className = 'app-card';
     card.innerHTML = `
-      <div class="app-card-icon" ${app.iconBg ? `style="background:${app.iconBg}"` : ''}>${app.icon}</div>
+      <div class="app-card-icon" ${app.iconBg ? `style="background:${app.iconBg}"` : ''}>${getAppIcon(app, 'card_' + id)}</div>
       <span class="app-card-name">${app.name}</span>
       <span class="app-card-count">${count} account${count !== 1 ? 's' : ''}</span>
     `;
@@ -44,8 +54,11 @@ async function renderCards() {
 }
 
 async function renderAccounts() {
+  const appId = currentApp;
+  const app = APPS[appId];
+  if (!appId || !app) return;
   const { accounts, currentAccount } = await getAccounts();
-  const activeName = currentAccount[currentApp];
+  const activeName = currentAccount[appId];
   const names = Object.keys(accounts);
 
   document.getElementById('current-name').textContent = activeName || 'No account loaded';
@@ -53,9 +66,8 @@ async function renderAccounts() {
 
   const list = document.getElementById('accounts-list');
   if (names.length === 0) {
-    const app = APPS[currentApp];
     list.innerHTML = `<div class="empty-state">
-      <div class="empty-state-icon">${app.icon}</div>
+      <div class="empty-state-icon" style="background:var(--card-icon-bg)">${getAppIcon(app, 'detail_' + appId)}</div>
       No saved accounts.<br>Login to ${app.name} and save your session.
     </div>`;
     return;
