@@ -16,6 +16,14 @@
       </header>
       <div class="search-wrap">
         <input type="text" id="app-search" placeholder="Search apps..." autocomplete="off" />
+        <select id="app-sort" title="Sort apps">
+          <option value="asc">Name (A–Z)</option>
+          <option value="dsc">Name (Z–A)</option>
+          <option value="most">Most saved</option>
+          <option value="least">Fewest saved</option>
+          <option value="newest">Newest apps</option>
+          <option value="oldest">Oldest apps</option>
+        </select>
       </div>
       <div id="app-cards" class="app-cards"></div>
     </main>

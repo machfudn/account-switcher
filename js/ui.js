@@ -7,6 +7,16 @@ function getAppIcon(app, prefix) {
 }
 
 let appFilter = '';
+let sortMode = 'asc';
+
+// Stable "added" order across re-renders: first time we see the app set we
+// snapshot the key order; later we reuse it so "newest/oldest added" is
+// deterministic even though Object.entries order can vary.
+let addedOrder = [];
+function touchAddedOrder(ids) {
+  for (const id of ids) if (!addedOrder.includes(id)) addedOrder.push(id);
+  addedOrder = addedOrder.filter(id => ids.includes(id));
+}
 
 function appMatchesQuery(id, app, q) {
   if (!q) return true;
@@ -60,9 +70,28 @@ async function renderCards() {
     return;
   }
 
-  for (const [id, app] of entries) {
-    const count = await getAccountCount(id);
+  // Snapshot a stable "added" order so recently/earliest added is deterministic.
+  touchAddedOrder(entries.map(([id]) => id));
 
+  // Attach account counts, then sort per the active sort mode.
+  const withCount = [];
+  for (const [id, app] of entries) {
+    withCount.push({ id, app, count: await getAccountCount(id) });
+  }
+
+  withCount.sort((a, b) => {
+    switch (sortMode) {
+      case 'dsc':    return b.app.name.localeCompare(a.app.name);
+      case 'most':   return b.count - a.count || a.app.name.localeCompare(b.app.name);
+      case 'least':  return a.count - b.count || a.app.name.localeCompare(b.app.name);
+      case 'newest': return addedOrder.indexOf(b.id) - addedOrder.indexOf(a.id);
+      case 'oldest': return addedOrder.indexOf(a.id) - addedOrder.indexOf(b.id);
+      case 'asc':
+      default:       return a.app.name.localeCompare(b.app.name);
+    }
+  });
+
+  for (const { id, app, count } of withCount) {
     const card = document.createElement('div');
     card.className = 'app-card';
     card.innerHTML = `
