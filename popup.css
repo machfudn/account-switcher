@@ -1,0 +1,508 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary: #0D9488;
+  --primary-hover: #0F766E;
+  --primary-light: #F0FDFA;
+  --primary-ring: #14B8A6;
+  --bg: #FAFBFC;
+  --surface: #FFFFFF;
+  --surface-hover: #F8FAFB;
+  --border: #E5E7EB;
+  --border-focus: #D1D5DB;
+  --text: #111827;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --danger: #DC2626;
+  --danger-hover: #B91C1C;
+  --danger-light: #FEF2F2;
+  --ghost: #F3F4F6;
+  --ghost-hover: #E5E7EB;
+  --radius: 10px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+  --transition: 150ms ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  width: 360px;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Views ────────────────────────────────────── */
+.view { padding: 16px; }
+
+/* ── Home ─────────────────────────────────────── */
+.home-header {
+  margin-bottom: 16px;
+}
+
+.home-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.home-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.app-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.app-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.app-card:hover {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+.app-card:active {
+  transform: translateY(0);
+}
+
+.app-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ghost);
+}
+
+.app-card-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.app-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.app-card-count {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Detail Header ────────────────────────────── */
+.detail-header {
+  margin-bottom: 12px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 4px 0;
+  margin-bottom: 10px;
+  transition: color var(--transition);
+}
+
+.back-btn:hover {
+  color: var(--text);
+}
+
+.current-account {
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.current-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.75;
+}
+
+.current-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ── Sections ─────────────────────────────────── */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.section-header h2 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge {
+  background: var(--ghost);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+/* ── Account List ─────────────────────────────── */
+.accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.account-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+.account-item:hover {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-sm);
+}
+
+.account-check {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.account-name {
+  flex: 1;
+  font-weight: 500;
+  font-size: 13px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.btn-switch {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-switch:hover { background: var(--primary-hover); }
+
+.btn-rename {
+  background: var(--ghost);
+  color: var(--text-secondary);
+}
+.btn-rename:hover { background: var(--ghost-hover); color: var(--text); }
+
+.btn-delete {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+.btn-delete:hover { background: var(--danger); color: #fff; }
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 24px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.empty-state-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ghost);
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.empty-state-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ── Save Row ─────────────────────────────────── */
+.save-row {
+  display: flex;
+  gap: 6px;
+}
+
+.save-row input { flex: 1; }
+
+.save-row .btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+}
+
+/* ── Backup Row ───────────────────────────────── */
+.backup-row {
+  display: flex;
+  gap: 6px;
+}
+
+.backup-row .btn { flex: 1; }
+
+/* ── Buttons ──────────────────────────────────── */
+.btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--primary-hover); }
+
+.btn-secondary {
+  background: var(--ghost);
+  color: var(--text);
+}
+.btn-secondary:hover { background: var(--ghost-hover); }
+
+.btn-danger {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+.btn-danger:hover { background: var(--danger); color: #fff; }
+
+.btn-ghost {
+  background: var(--ghost);
+  color: var(--text);
+}
+.btn-ghost:hover { background: var(--ghost-hover); }
+
+.btn-block { width: 100%; }
+
+.btn-export {
+  background: #fff;
+  color: var(--primary);
+}
+.btn-export:hover { background: var(--primary-light); }
+
+/* ── Inputs ───────────────────────────────────── */
+input[type="text"] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+input[type="text"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
+}
+
+input[type="text"]::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Export Bar ───────────────────────────────── */
+.export-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 50;
+  animation: slideUp 150ms ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* ── Modal ────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+  z-index: 100;
+}
+
+.modal-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  width: calc(100% - 40px);
+  max-width: 320px;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.95) translateY(4px);
+  transition: transform 150ms ease;
+}
+
+.modal-overlay.visible .modal {
+  transform: scale(1) translateY(0);
+}
+
+.modal h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.modal-message {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.modal-input { margin-bottom: 0; }
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal-actions .btn { flex: 1; }
+
+#modal-confirm.danger {
+  background: var(--danger);
+  color: #fff;
+}
+#modal-confirm.danger:hover {
+  background: var(--danger-hover);
+}
+
+/* ── Utilities ────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ── Animations ───────────────────────────────── */
+.app-cards .app-card {
+  animation: fadeIn 150ms ease;
+}
+
+.accounts-list .account-item {
+  animation: fadeIn 150ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scrollbar ────────────────────────────────── */
+.view::-webkit-scrollbar { width: 4px; }
+.view::-webkit-scrollbar-track { background: transparent; }
+.view::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ── Focus visible ────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
