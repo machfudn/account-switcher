@@ -6,6 +6,22 @@ function getAppIcon(app, prefix) {
     .replace(/url\(#([^)]+)\)/g, `url(#${p}_$1)`);
 }
 
+let appFilter = '';
+
+function appMatchesQuery(id, app, q) {
+  if (!q) return true;
+  const needle = q.toLowerCase();
+  if (app.name.toLowerCase().includes(needle)) return true;
+  if (id.toLowerCase().includes(needle)) return true;
+  if ((app.domains || []).some(d => d.toLowerCase().includes(needle))) return true;
+  return false;
+}
+
+function setAppFilter(value) {
+  appFilter = value;
+  renderCards();
+}
+
 function applyTheme() {
   const app = APPS[currentApp];
   const root = document.documentElement;
@@ -38,7 +54,13 @@ async function renderCards() {
   const container = document.getElementById('app-cards');
   container.innerHTML = '';
 
-  for (const [id, app] of Object.entries(APPS)) {
+  const entries = Object.entries(APPS).filter(([id, app]) => appMatchesQuery(id, app, appFilter));
+  if (entries.length === 0) {
+    container.innerHTML = `<div class="empty-state">No apps match "${appFilter}".</div>`;
+    return;
+  }
+
+  for (const [id, app] of entries) {
     const count = await getAccountCount(id);
 
     const card = document.createElement('div');

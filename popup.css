@@ -59,6 +59,27 @@ body {
   margin-top: 2px;
 }
 
+.search-wrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.search-wrap svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-wrap input {
+  padding-left: 30px;
+  width: 100%;
+}
+
 .app-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;

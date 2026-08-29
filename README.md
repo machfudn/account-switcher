@@ -39,6 +39,7 @@ A lightweight browser extension that lets you save and switch between multiple a
 - **Multi-app support** — Manage accounts for 12 apps from one extension
 - **One-click switching** — Instantly swap between saved sessions
 - **Per-app tabs** — Clean tabbed UI to switch between apps
+- **App search** — Filter the app list from the main menu to jump to any of the 12 apps fast
 - **Themed interface** — Each app gets its own brand color
 - **Session backup** — Export all or selected sessions to a JSON file
 - **Import** — Restore sessions from an export file, on any machine

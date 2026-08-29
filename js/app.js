@@ -1,6 +1,7 @@
 const IN_WINDOW_CTX = new URLSearchParams(location.search).has('ctx');
 
 document.getElementById('back-btn').addEventListener('click', goHome);
+document.getElementById('app-search').addEventListener('input', e => setAppFilter(e.target.value));
 document.getElementById('save-btn').addEventListener('click', saveCurrentSession);
 document.getElementById('clear-all-btn').addEventListener('click', clearAllSessions);
 document.getElementById('export-btn').addEventListener('click', exportSessions);
