@@ -5,7 +5,7 @@
 
 # Account Switcher
 
-*Switch between multiple accounts for ChatGPT, Claude, Gemini, Canva, Perplexity, Poe, Copilot, Grok, DeepSeek, HuggingChat, Cursor, and NotebookLM*
+*Switch between multiple accounts for 41 apps — ChatGPT, Claude, Gemini, Canva, Notion, Figma, GitHub, Netflix, Spotify, and many more*
 
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-34A853?style=flat-square)](https://developer.chrome.com/docs/extensions/develop/concepts/mv3-overview)
@@ -15,32 +15,66 @@
 
 </div>
 
-A lightweight browser extension that lets you save and switch between multiple accounts across ChatGPT, Claude, Google Gemini, Canva, Perplexity, Poe, Microsoft Copilot, Grok, DeepSeek, HuggingChat, Cursor, and NotebookLM — without logging out and back in. Sessions are stored locally in your browser and can be exported or imported as JSON files for backup or migration.
+A lightweight browser extension that lets you save and switch between multiple accounts across 41 web apps — including AI chat assistants, design & dev tools, media streaming, and music services — without logging out and back in. Sessions are stored locally in your browser and can be exported or imported as JSON files for backup or migration.
 
 ## Supported Apps
 
+**41 apps** across four categories:
+
 | App | Domains |
 |-----|---------|
-| ChatGPT | `chatgpt.com`, `openai.com` |
-| Claude | `claude.ai` |
-| Gemini | `gemini.google.com` |
-| Canva | `canva.com` |
-| Perplexity | `perplexity.ai` |
-| Poe | `poe.com` |
-| Microsoft Copilot | `copilot.microsoft.com` |
-| Grok | `x.com`, `grok.com` |
-| DeepSeek | `chat.deepseek.com` |
-| HuggingChat | `huggingface.co` |
-| Cursor | `cursor.com` |
-| NotebookLM | `notebooklm.google.com` |
+| **ChatGPT** | `chatgpt.com`, `openai.com` |
+| **Claude** | `claude.ai` |
+| **Gemini** | `gemini.google.com` |
+| **Perplexity** | `perplexity.ai` |
+| **Poe** | `poe.com` |
+| **Microsoft Copilot** | `copilot.microsoft.com` |
+| **Grok** | `x.com`, `grok.com` |
+| **DeepSeek** | `chat.deepseek.com` |
+| **HuggingChat** | `huggingface.co` |
+| **NotebookLM** | `notebooklm.google.com` |
+| **Cursor** | `cursor.com` |
+| **Canva** | `canva.com` |
+| **Figma** | `figma.com` |
+| **v0** | `v0.dev` |
+| **Lovable** | `lovable.dev` |
+| **Replit** | `replit.com` |
+| **Notion** | `notion.so`, `notion.site` |
+| **GitHub** | `github.com` |
+| **Slack** | `slack.com` |
+| **Vercel** | `vercel.com` |
+| **Lark** | `larksuite.com` |
+| **WhatsApp** | `whatsapp.com` |
+| **Facebook** | `facebook.com` |
+| **Netflix** | `netflix.com` |
+| **Disney+** | `disneyplus.com` |
+| **Prime Video** | `primevideo.com` |
+| **Max** | `max.com` |
+| **Hulu** | `hulu.com` |
+| **Crunchyroll** | `crunchyroll.com` |
+| **Viu** | `viu.com` |
+| **WeTV** | `wetv.com` |
+| **Hotstar** | `hotstar.com` |
+| **Bstation** | `bilibili.tv` |
+| **Midjourney** | `midjourney.com` |
+| **Runway** | `runwayml.com` |
+| **Spotify** | `open.spotify.com`, `spotify.com` |
+| **Deezer** | `deezer.com` |
+| **SoundCloud** | `soundcloud.com` |
+| **Tidal** | `tidal.com` |
+| **Pandora** | `pandora.com` |
+| **Bandcamp** | `bandcamp.com` |
+
+> Google apps (Gemini, NotebookLM) switch via the `?authuser` URL index rather than cookie-swap, so other Google accounts stay logged in. All other apps use the cookie-swap method.
 
 ## Features
 
-- **Multi-app support** — Manage accounts for 12 apps from one extension
+- **41 apps, one extension** — AI chat, design/dev, streaming, and music
 - **One-click switching** — Instantly swap between saved sessions
 - **Per-app tabs** — Clean tabbed UI to switch between apps
-- **App search** — Filter the app list from the main menu to jump to any of the 12 apps fast
-- **Themed interface** — Each app gets its own brand color
+- **App search** — Filter the app list from the main menu to jump to any app fast
+- **Sort filter** — Sort the app grid by name (A→Z / Z→A), most/fewest saved accounts, or newest/oldest apps — sits right next to the search box
+- **Themed interface** — Each app gets its own brand color and icon
 - **Session backup** — Export all or selected sessions to a JSON file
 - **Import** — Restore sessions from an export file, on any machine
 - **Account management** — Rename or delete saved accounts at any time
@@ -48,7 +82,9 @@ A lightweight browser extension that lets you save and switch between multiple a
 
 ## How it works
 
-When you save a session, the extension captures all cookies for the selected app's domains — including partitioned cookies — and stores them in `chrome.storage.local` under an app-specific key. Switching accounts clears the current session cookies and restores the ones from the selected account, then reloads any open tabs for that app.
+When you save a session, the extension captures all cookies for the selected app's domains — including partitioned (CHIPS) cookies — and stores them in `chrome.storage.local` under an app-specific key. Switching accounts clears the current session cookies and restores the ones from the selected account, then reloads any open tabs for that app.
+
+For Google properties (Gemini, NotebookLM) the real login tokens live in shared SSO cookies, so cookie-swap would log every Google account out. Those apps instead switch via the `?authuser=N` URL index and never touch cookies.
 
 No data ever leaves your browser: everything stays in local storage unless you explicitly export it yourself.
 
@@ -65,15 +101,15 @@ account-switcher/
 ├── icons/
 └── js/
     ├── config.js          # APPS = {} registry + shared state (currentApp, selectedNames)
-    ├── apps/              # one file per supported app
+    ├── apps/              # one file per supported app (41 files)
     │   ├── chatgpt.js
     │   ├── claude.js
     │   ├── gemini.js
-    │   └── canva.js
+    │   └── ... (one file per app)
     ├── cookies.js         # capture / restore cookies for the active app
     ├── storage.js         # chrome.storage.local wrapper (per-app key)
     ├── modal.js           # shared confirm/prompt modal
-    ├── ui.js              # render cards + account list
+    ├── ui.js              # render cards + account list + sort logic
     ├── actions.js         # save / switch / rename / delete / clear
     ├── export.js          # export / import sessions as JSON
     └── app.js             # popup wiring + bootstrap
@@ -136,6 +172,19 @@ The extension is not published yet — install it manually from the source:
 
 Open the popup, select the app tab, and click **Switch** next to the account you want to use. Your current session is replaced by the saved one and all open tabs for that app are reloaded automatically.
 
+### Sort & search the app grid
+
+On the home screen, type in the search box to filter by name/domain, and use the **sort** dropdown next to it to reorder the app grid:
+
+| Sort option | Order |
+| --- | --- |
+| Name (A–Z) | Alphabetical, ascending |
+| Name (Z–A) | Alphabetical, descending |
+| Most saved | Apps with the most saved accounts first |
+| Fewest saved | Apps with the fewest saved accounts first |
+| Newest apps | Apps in definition order (last added first) |
+| Oldest apps | Apps in definition order (first added first) |
+
 ### Manage accounts
 
 | Action | Description |
@@ -167,4 +216,4 @@ Only files exported by this extension are accepted, and they must contain at lea
 
 ## Disclaimer
 
-This extension is not affiliated with, endorsed by, or connected to OpenAI, Anthropic, Google, or Canva. Use of multiple accounts must comply with each service's terms of service.
+This extension is not affiliated with, endorsed by, or connected to any of the services it supports. Use of multiple accounts must comply with each service's terms of service.
