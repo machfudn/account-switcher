@@ -1,0 +1,103 @@
+function applyTheme() {
+  const app = APPS[currentApp];
+  const root = document.documentElement;
+  root.style.setProperty('--primary', app.color);
+  root.style.setProperty('--primary-hover', app.colorHover);
+  root.style.setProperty('--primary-light', app.colorLight);
+  root.style.setProperty('--primary-ring', app.color);
+}
+
+function updateExportBar() {
+  const count = selectedNames.size;
+  document.getElementById('export-bar').classList.toggle('hidden', count === 0);
+  document.getElementById('selection-count').textContent = `${count} selected`;
+}
+
+function toggleSelection(name, checked) {
+  checked ? selectedNames.add(name) : selectedNames.delete(name);
+  updateExportBar();
+}
+
+async function getAccountCount(appId) {
+  const key = `accounts_${appId}`;
+  const data = await chrome.storage.local.get(key);
+  return Object.keys(data[key] || {}).length;
+}
+
+async function renderCards() {
+  const container = document.getElementById('app-cards');
+  container.innerHTML = '';
+
+  for (const [id, app] of Object.entries(APPS)) {
+    const count = await getAccountCount(id);
+
+    const card = document.createElement('div');
+    card.className = 'app-card';
+    card.innerHTML = `
+      <div class="app-card-icon" ${app.iconBg ? `style="background:${app.iconBg}"` : ''}>${app.icon}</div>
+      <span class="app-card-name">${app.name}</span>
+      <span class="app-card-count">${count} account${count !== 1 ? 's' : ''}</span>
+    `;
+    card.addEventListener('click', () => openApp(id));
+    container.appendChild(card);
+  }
+}
+
+async function renderAccounts() {
+  const { accounts, currentAccount } = await getAccounts();
+  const activeName = currentAccount[currentApp];
+  const names = Object.keys(accounts);
+
+  document.getElementById('current-name').textContent = activeName || 'No account loaded';
+  document.getElementById('account-count').textContent = names.length || '';
+
+  const list = document.getElementById('accounts-list');
+  if (names.length === 0) {
+    const app = APPS[currentApp];
+    list.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">${app.icon}</div>
+      No saved accounts.<br>Login to ${app.name} and save your session.
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  for (const name of names) {
+    const item = document.createElement('div');
+    item.className = 'account-item';
+
+    const check = document.createElement('input');
+    check.type = 'checkbox';
+    check.className = 'account-check';
+    check.title = 'Select for export';
+    check.checked = selectedNames.has(name);
+    check.addEventListener('change', () => toggleSelection(name, check.checked));
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'account-name';
+    nameEl.textContent = name;
+    if (name === activeName) nameEl.style.color = 'var(--primary)';
+
+    const actions = document.createElement('div');
+    actions.className = 'account-actions';
+
+    const switchBtn = document.createElement('button');
+    switchBtn.className = 'btn-icon btn-switch';
+    switchBtn.textContent = 'Switch';
+    switchBtn.addEventListener('click', () => switchAccount(name));
+
+    const renameBtn = document.createElement('button');
+    renameBtn.className = 'btn-icon btn-rename';
+    renameBtn.textContent = 'Rename';
+    renameBtn.addEventListener('click', () => renameAccount(name));
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn-icon btn-delete';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.addEventListener('click', () => deleteAccount(name));
+
+    actions.append(switchBtn, renameBtn, deleteBtn);
+    item.append(check, nameEl, actions);
+    list.appendChild(item);
+  }
+}
