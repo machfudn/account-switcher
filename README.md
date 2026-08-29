@@ -5,7 +5,7 @@
 
 # Account Switcher
 
-*Switch between multiple accounts for ChatGPT, Claude, Gemini, and Canva*
+*Switch between multiple accounts for ChatGPT, Claude, Gemini, Canva, Perplexity, Poe, Copilot, Grok, DeepSeek, HuggingChat, Cursor, and NotebookLM*
 
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-34A853?style=flat-square)](https://developer.chrome.com/docs/extensions/develop/concepts/mv3-overview)
@@ -15,7 +15,7 @@
 
 </div>
 
-A lightweight browser extension that lets you save and switch between multiple accounts across ChatGPT, Claude, Google Gemini, and Canva — without logging out and back in. Sessions are stored locally in your browser and can be exported or imported as JSON files for backup or migration.
+A lightweight browser extension that lets you save and switch between multiple accounts across ChatGPT, Claude, Google Gemini, Canva, Perplexity, Poe, Microsoft Copilot, Grok, DeepSeek, HuggingChat, Cursor, and NotebookLM — without logging out and back in. Sessions are stored locally in your browser and can be exported or imported as JSON files for backup or migration.
 
 ## Supported Apps
 
@@ -25,10 +25,18 @@ A lightweight browser extension that lets you save and switch between multiple a
 | Claude | `claude.ai` |
 | Gemini | `gemini.google.com` |
 | Canva | `canva.com` |
+| Perplexity | `perplexity.ai` |
+| Poe | `poe.com` |
+| Microsoft Copilot | `copilot.microsoft.com` |
+| Grok | `x.com`, `grok.com` |
+| DeepSeek | `chat.deepseek.com` |
+| HuggingChat | `huggingface.co` |
+| Cursor | `cursor.com` |
+| NotebookLM | `notebooklm.google.com` |
 
 ## Features
 
-- **Multi-app support** — Manage accounts for 4 apps from one extension
+- **Multi-app support** — Manage accounts for 12 apps from one extension
 - **One-click switching** — Instantly swap between saved sessions
 - **Per-app tabs** — Clean tabbed UI to switch between apps
 - **Themed interface** — Each app gets its own brand color
