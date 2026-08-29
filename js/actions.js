@@ -31,8 +31,18 @@ async function saveCurrentSession() {
     return;
   }
 
+  // For Google-style apps, also remember which authuser index this session is
+  // (read from the active tab's ?authuser=N) so switchAccount can pick it back
+  // via the URL instead of swapping cookies (which would log other accounts out).
+  let authuser = undefined;
+  if (APPS[currentApp].authuser) {
+    const [active] = await new Promise(res => chrome.tabs.query({ active: true, currentWindow: true }, t => res(t || [])));
+    if (active && active.url) authuser = authUserFromUrl(active.url);
+  }
+
   const { accounts } = await getAccounts();
   accounts[name] = { cookies, savedAt: new Date().toISOString() };
+  if (authuser !== undefined) accounts[name].authuser = authuser;
 
   const { currentAccount } = await getAccounts();
   currentAccount[currentApp] = name;
@@ -42,6 +52,16 @@ async function saveCurrentSession() {
   renderAccounts();
 }
 
+function authUserFromUrl(url) {
+  try {
+    const v = new URL(url).searchParams.get('authuser');
+    const n = v == null ? 0 : parseInt(v, 10);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  } catch {
+    return 0;
+  }
+}
+
 async function switchAccount(name) {
   const { accounts } = await getAccounts();
   if (!accounts[name]) {
@@ -49,9 +69,42 @@ async function switchAccount(name) {
     return;
   }
 
+  // Google-style apps (Gemini, NotebookLM): the real login tokens live in the
+  // shared SSO cookies (.google.com / accounts.google.com), so swapping cookies
+  // would log every Google account out, and swapping only the app subdomain
+  // never changes the signed-in user. The logout-free way to pick an already
+  // logged-in Google account is the ?authuser=N URL index — just point the open
+  // tabs at the saved index. No cookie is touched, so other accounts stay in.
+  if (APPS[currentApp].authuser) {
+    const target = accounts[name].authuser ?? 0;
+    const { currentAccount } = await getAccounts();
+    currentAccount[currentApp] = name;
+    await saveAccounts(accounts, currentAccount);
+
+    chrome.tabs.query({ url: APPS[currentApp].tabs }, tabs => {
+      if (!tabs || tabs.length === 0) {
+        chrome.tabs.create({ url: `https://${APPS[currentApp].domains[0]}/?authuser=${target}` });
+        return;
+      }
+      tabs.forEach(tab => {
+        try {
+          const u = new URL(tab.url || `https://${APPS[currentApp].domains[0]}/`);
+          u.searchParams.set('authuser', String(target));
+          chrome.tabs.update(tab.id, { url: u.toString() });
+        } catch {
+          chrome.tabs.update(tab.id, { url: `https://${APPS[currentApp].domains[0]}/?authuser=${target}` });
+        }
+      });
+    });
+
+    renderAccounts();
+    return;
+  }
+
+  // ---- Legacy cookie-swap path (non-Google apps) ----
   // Remove ALL cookies from ALL app domains (clean slate).
   // Must NOT filter by partitionKey:{} — that would skip the partitioned
-  // (CHIPS) cookies that actually hold Gemini's auth session. Omitting the
+  // (CHIPS) cookies that actually hold the auth session. Omitting the
   // key returns every cookie (partitioned ones included, each with its own
   // partitionKey we forward to remove/set so they land in the right bucket).
   const domains = APPS[currentApp].domains;
