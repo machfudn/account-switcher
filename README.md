@@ -43,6 +43,61 @@ When you save a session, the extension captures all cookies for the selected app
 
 No data ever leaves your browser: everything stays in local storage unless you explicitly export it yourself.
 
+## Project Structure
+
+Per-app configuration is split into its own file so each supported app is maintained in isolation. The engine modules are fully generic and never reference an app by name.
+
+```
+account-switcher/
+├── manifest.json          # MV3 manifest + host_permissions (domain allowlist)
+├── popup.html             # loads config → apps → engine scripts in order
+├── popup.css
+├── background.js          # service worker
+├── icons/
+└── js/
+    ├── config.js          # APPS = {} registry + shared state (currentApp, selectedNames)
+    ├── apps/              # one file per supported app
+    │   ├── chatgpt.js
+    │   ├── claude.js
+    │   ├── gemini.js
+    │   └── canva.js
+    ├── cookies.js         # capture / restore cookies for the active app
+    ├── storage.js         # chrome.storage.local wrapper (per-app key)
+    ├── modal.js           # shared confirm/prompt modal
+    ├── ui.js              # render cards + account list
+    ├── actions.js         # save / switch / rename / delete / clear
+    ├── export.js          # export / import sessions as JSON
+    └── app.js             # popup wiring + bootstrap
+```
+
+Each file under `js/apps/` registers itself by assigning to the shared `APPS` object, e.g.:
+
+```js
+// js/apps/chatgpt.js
+APPS.chatgpt = {
+  name: 'ChatGPT',
+  color: '#10A37F',
+  icon: `<svg …>`,
+  domains: ['chatgpt.com', 'openai.com'],
+  tabs: ['https://chatgpt.com/*', 'https://*.chatgpt.com/*', 'https://chat.openai.com/*']
+};
+```
+
+## Adding a Supported App
+
+Because the engine is app-agnostic, adding a service is pure data — no engine changes required.
+
+1. **Create `js/apps/<id>.js`** registering the app on `APPS` (see the example above). Use a stable lowercase `id`.
+2. **Add its domains** to `host_permissions` in `manifest.json` (e.g. `"https://perplexity.ai/*"`). This step is mandatory — the browser blocks cookie access to any domain not listed here.
+3. **Load the script** in `popup.html` between `js/config.js` and `js/cookies.js`:
+   ```html
+   <script src="js/apps/<id>.js"></script>
+   ```
+4. Reload the extension from `chrome://extensions` and the new app appears as a card automatically.
+
+> [!NOTE]
+> `manifest.json` cannot be split per app, so the domain allowlist stays centralized there. Everything else about an app lives in its own `js/apps/<id>.js` file.
+
 ## Installation
 
 The extension is not published yet — install it manually from the source:
