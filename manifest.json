@@ -34,7 +34,8 @@
     "https://*.huggingface.co/*",
     "https://cursor.com/*",
     "https://*.cursor.com/*",
-    "https://notebooklm.google.com/*"
+    "https://notebooklm.google.com/*",
+    "https://*.notebooklm.google.com/*"
   ],
   "action": {
     "default_popup": "popup.html",
