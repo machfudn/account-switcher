@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="c" width="128" height="128"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+function drawIcon(size) {
+  canvas.width = size;
+  canvas.height = size;
+  
+  const margin = Math.max(1, Math.floor(size / 16));
+  const radius = Math.max(2, Math.floor(size / 5));
+  
+  ctx.fillStyle = '#0D9488';
+  ctx.beginPath();
+  ctx.roundRect(margin, margin, size - margin * 2, size - margin * 2, radius);
+  ctx.fill();
+  
+  ctx.fillStyle = 'white';
+  ctx.font = `bold ${Math.floor(size * 0.36)}px "Plus Jakarta Sans", Arial, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('AS', size / 2, size / 2);
+  
+  return canvas.toDataURL('image/png');
+}
+
+[16, 48, 128].forEach(size => {
+  console.log(`icon${size}.png: ${drawIcon(size).substring(0, 50)}...`);
+});
+</script>
+</body>
+</html>
