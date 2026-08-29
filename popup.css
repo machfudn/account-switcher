@@ -44,7 +44,7 @@ body {
 
 /* ── Home ─────────────────────────────────────── */
 .home-header {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .home-header h1 {
@@ -61,22 +61,14 @@ body {
 
 .search-wrap {
   position: relative;
-  margin-bottom: 14px;
-}
-
-.search-wrap svg {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 14px;
-  height: 14px;
-  color: var(--text-muted);
-  pointer-events: none;
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
 .search-wrap input {
-  padding-left: 30px;
+  flex: 1;
+  min-width: 0;
   width: 100%;
 }
 
@@ -295,6 +287,7 @@ body {
 .btn-delete:hover { background: var(--danger); color: #fff; }
 
 .empty-state {
+  grid-column: 1 / -1;
   text-align: center;
   color: var(--text-muted);
   padding: 24px 16px;
