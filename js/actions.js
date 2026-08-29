@@ -31,18 +31,20 @@ async function saveCurrentSession() {
     return;
   }
 
-  // For Google-style apps, also remember which authuser index this session is
-  // (read from the active tab's ?authuser=N) so switchAccount can pick it back
-  // via the URL instead of swapping cookies (which would log other accounts out).
-  let authuser = undefined;
+  // For Google-style apps, also remember which account index this session is
+  // (read from the active tab's /u/N/ path segment — Gemini/NotebookLM use the
+  // /u/N/ selector, where N is the Google multi-login index) so switchAccount
+  // can point the tab back at that account via the URL instead of swapping
+  // cookies (which would log other accounts out).
+  let uIndex = undefined;
   if (APPS[currentApp].authuser) {
     const [active] = await new Promise(res => chrome.tabs.query({ active: true, currentWindow: true }, t => res(t || [])));
-    if (active && active.url) authuser = authUserFromUrl(active.url);
+    if (active && active.url) uIndex = uIndexFromUrl(active.url);
   }
 
   const { accounts } = await getAccounts();
   accounts[name] = { cookies, savedAt: new Date().toISOString() };
-  if (authuser !== undefined) accounts[name].authuser = authuser;
+  if (uIndex !== undefined) accounts[name].uIndex = uIndex;
 
   const { currentAccount } = await getAccounts();
   currentAccount[currentApp] = name;
@@ -52,14 +54,28 @@ async function saveCurrentSession() {
   renderAccounts();
 }
 
-function authUserFromUrl(url) {
+function uIndexFromUrl(url) {
   try {
-    const v = new URL(url).searchParams.get('authuser');
-    const n = v == null ? 0 : parseInt(v, 10);
-    return Number.isFinite(n) && n >= 0 ? n : 0;
+    const m = url.match(/\/u\/(\d+)\//);
+    if (m) {
+      const n = parseInt(m[1], 10);
+      return Number.isFinite(n) && n >= 0 ? n : 0;
+    }
+    return 0;
   } catch {
     return 0;
   }
+}
+
+// Rewrite the /u/N/ segment in a Google app URL to the target account index.
+function withUIndex(url, n) {
+  const u = new URL(url);
+  if (/\/u\/\d+\//.test(u.pathname)) {
+    u.pathname = u.pathname.replace(/\/u\/\d+\//, `/u/${n}/`);
+  } else {
+    u.pathname = `/u/${n}${u.pathname === '/' ? '' : u.pathname}`;
+  }
+  return u.toString();
 }
 
 async function switchAccount(name) {
@@ -73,26 +89,25 @@ async function switchAccount(name) {
   // shared SSO cookies (.google.com / accounts.google.com), so swapping cookies
   // would log every Google account out, and swapping only the app subdomain
   // never changes the signed-in user. The logout-free way to pick an already
-  // logged-in Google account is the ?authuser=N URL index — just point the open
-  // tabs at the saved index. No cookie is touched, so other accounts stay in.
+  // logged-in Google account is the /u/N/ path segment (N = multi-login index),
+  // e.g. https://gemini.google.com/u/0/app -> /u/1/. Just point the open tabs
+  // at the saved /u/N/, no cookie touched, so other accounts stay logged in.
   if (APPS[currentApp].authuser) {
-    const target = accounts[name].authuser ?? 0;
+    const target = accounts[name].uIndex ?? 0;
     const { currentAccount } = await getAccounts();
     currentAccount[currentApp] = name;
     await saveAccounts(accounts, currentAccount);
 
     chrome.tabs.query({ url: APPS[currentApp].tabs }, tabs => {
       if (!tabs || tabs.length === 0) {
-        chrome.tabs.create({ url: `https://${APPS[currentApp].domains[0]}/?authuser=${target}` });
+        chrome.tabs.create({ url: withUIndex(`https://${APPS[currentApp].domains[0]}/`, target) });
         return;
       }
       tabs.forEach(tab => {
         try {
-          const u = new URL(tab.url || `https://${APPS[currentApp].domains[0]}/`);
-          u.searchParams.set('authuser', String(target));
-          chrome.tabs.update(tab.id, { url: u.toString() });
+          chrome.tabs.update(tab.id, { url: withUIndex(tab.url || `https://${APPS[currentApp].domains[0]}/`, target) });
         } catch {
-          chrome.tabs.update(tab.id, { url: `https://${APPS[currentApp].domains[0]}/?authuser=${target}` });
+          chrome.tabs.update(tab.id, { url: withUIndex(`https://${APPS[currentApp].domains[0]}/`, target) });
         }
       });
     });
