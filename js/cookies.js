@@ -14,7 +14,11 @@ async function getSessionCookies() {
   const seen = new Set();
   const result = [];
   for (const domain of domains) {
-    const cookies = await chrome.cookies.getAll({ domain, partitionKey: {} });
+    // Important: do NOT pass partitionKey:{}. An empty partitionKey only
+    // returns non-partitioned cookies. Google/Gemini keep their auth session
+    // in *partitioned* cookies (CHIPS). Omitting the key returns ALL cookies,
+    // each carrying its own `partitionKey.topLevelSite` we must round-trip.
+    const cookies = await chrome.cookies.getAll({ domain });
     for (const c of cookies) {
       const pk = c.partitionKey?.topLevelSite || '';
       const key = `${c.domain}|${c.path}|${c.name}|${pk}`;

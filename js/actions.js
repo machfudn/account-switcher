@@ -49,10 +49,14 @@ async function switchAccount(name) {
     return;
   }
 
-  // Remove ALL cookies from ALL app domains (clean slate)
+  // Remove ALL cookies from ALL app domains (clean slate).
+  // Must NOT filter by partitionKey:{} — that would skip the partitioned
+  // (CHIPS) cookies that actually hold Gemini's auth session. Omitting the
+  // key returns every cookie (partitioned ones included, each with its own
+  // partitionKey we forward to remove/set so they land in the right bucket).
   const domains = APPS[currentApp].domains;
   for (const domain of domains) {
-    const cookies = await chrome.cookies.getAll({ domain, partitionKey: {} });
+    const cookies = await chrome.cookies.getAll({ domain });
     for (const cookie of cookies) {
       try {
         await chrome.cookies.remove({ url: toCookieUrl(cookie), name: cookie.name, ...partitionOf(cookie) });
@@ -88,7 +92,7 @@ async function switchAccount(name) {
   await saveAccounts(accounts, currentAccount);
 
   chrome.tabs.query({ url: APPS[currentApp].tabs }, tabs => {
-    tabs.forEach(tab => chrome.tabs.reload(tab.id));
+    tabs.forEach(tab => chrome.tabs.reload(tab.id, { bypassCache: true }));
   });
 
   if (failed.length > 0) {
