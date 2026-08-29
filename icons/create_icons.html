@@ -3,33 +3,90 @@
 <body>
 <canvas id="c" width="128" height="128"></canvas>
 <script>
+// Regenerates icons/icon16.png, icon48.png, icon128.png
+// Design: rounded gradient tile (teal -> cyan) with a white "swap accounts" glyph.
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
 
 function drawIcon(size) {
   canvas.width = size;
   canvas.height = size;
-  
-  const margin = Math.max(1, Math.floor(size / 16));
-  const radius = Math.max(2, Math.floor(size / 5));
-  
-  ctx.fillStyle = '#0D9488';
-  ctx.beginPath();
-  ctx.roundRect(margin, margin, size - margin * 2, size - margin * 2, radius);
+  ctx.clearRect(0, 0, size, size);
+
+  const m = Math.max(1, Math.round(size * 0.06));   // outer margin
+  const r = Math.max(2, Math.round(size * 0.20));    // corner radius
+  const grad = ctx.createLinearGradient(0, 0, size, size);
+  grad.addColorStop(0, '#14B8A6');
+  grad.addColorStop(0.55, '#0D9488');
+  grad.addColorStop(1, '#0E7490');
+
+  // tile
+  roundRect(m, m, size - m * 2, size - m * 2, r);
+  ctx.fillStyle = grad;
   ctx.fill();
-  
-  ctx.fillStyle = 'white';
-  ctx.font = `bold ${Math.floor(size * 0.36)}px "Plus Jakarta Sans", Arial, sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('AS', size / 2, size / 2);
-  
+
+  // crisp inner highlight
+  ctx.lineWidth = Math.max(0.5, size / 128);
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  roundRect(m + ctx.lineWidth / 2, m + ctx.lineWidth / 2,
+            size - m * 2 - ctx.lineWidth, size - m * 2 - ctx.lineWidth, r - 1);
+  ctx.stroke();
+
+  // swap glyph — two arrows
+  const lw = Math.max(1, size * 0.0625);
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = lw;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  const cx = size / 2;
+  const topY = size * 0.42;
+  const botY = size * 0.58;
+  const pad = size * 0.20;
+  const left = pad;
+  const right = size - pad;
+  const head = size * 0.10;
+
+  // top arrow -> right
+  ctx.beginPath();
+  ctx.moveTo(left, topY);
+  ctx.lineTo(right, topY);
+  ctx.moveTo(right, topY);
+  ctx.lineTo(right - head, topY - head * 0.6);
+  ctx.moveTo(right, topY);
+  ctx.lineTo(right - head, topY + head * 0.6);
+  ctx.stroke();
+
+  // bottom arrow -> left
+  ctx.beginPath();
+  ctx.moveTo(right, botY);
+  ctx.lineTo(left, botY);
+  ctx.moveTo(left, botY);
+  ctx.lineTo(left + head, botY - head * 0.6);
+  ctx.moveTo(left, botY);
+  ctx.lineTo(left + head, botY + head * 0.6);
+  ctx.stroke();
+
   return canvas.toDataURL('image/png');
 }
 
 [16, 48, 128].forEach(size => {
   console.log(`icon${size}.png: ${drawIcon(size).substring(0, 50)}...`);
 });
+
+// To save: right-click the canvas in devtools, or use the data URLs logged above.
+// This page is a generator helper; the committed PNGs are produced via ImageMagick
+// from icons/icon.svg to keep filters/gradients pixel-perfect.
 </script>
 </body>
 </html>
